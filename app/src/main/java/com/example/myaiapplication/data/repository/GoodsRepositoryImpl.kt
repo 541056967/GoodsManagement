@@ -1,6 +1,7 @@
 package com.example.myaiapplication.data.repository
 
 import com.example.myaiapplication.data.local.dao.GoodsDao
+import com.example.myaiapplication.data.local.dao.LocationDao
 import com.example.myaiapplication.data.local.entity.*
 import com.example.myaiapplication.data.mapper.toGoods
 import com.example.myaiapplication.data.mapper.toGoodsEntity
@@ -15,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class GoodsRepositoryImpl @Inject constructor(
-    private val goodsDao: GoodsDao
+    private val goodsDao: GoodsDao,
+    private val locationDao: LocationDao
 ) : GoodsRepository {
 
     override suspend fun insertGoods(goods: Goods): Long {
@@ -91,6 +93,11 @@ class GoodsRepositoryImpl @Inject constructor(
             .map { list -> list.map { it.toGoods() } }
     }
 
+    override fun getGoodsByArea(areaId: String): Flow<List<Goods>> {
+        return goodsDao.getGoodsByAreaId(areaId)
+            .map { list -> list.map { it.toGoods() } }
+    }
+
     override fun searchGoods(query: String): Flow<List<Goods>> {
         return goodsDao.searchGoods(query)
             .map { list -> list.map { it.toGoods() } }
@@ -102,5 +109,9 @@ class GoodsRepositoryImpl @Inject constructor(
 
     override fun getTotalValue(): Flow<Double?> {
         return goodsDao.getTotalValue()
+    }
+
+    override fun getAllLocations(): Flow<List<String>> {
+        return locationDao.getAllDistinctAreaIds()
     }
 } 

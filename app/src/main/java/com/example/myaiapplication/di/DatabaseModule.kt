@@ -3,6 +3,7 @@ package com.example.myaiapplication.di
 import android.content.Context
 import androidx.room.Room
 import com.example.myaiapplication.data.local.dao.GoodsDao
+import com.example.myaiapplication.data.local.dao.LocationDao
 import com.example.myaiapplication.data.local.database.GoodsDatabase
 import com.example.myaiapplication.data.repository.GoodsRepositoryImpl
 import com.example.myaiapplication.domain.repository.GoodsRepository
@@ -37,9 +38,16 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun provideLocationDao(database: GoodsDatabase): LocationDao {
+        return database.locationDao()
+    }
+
+    @Provides
+    @Singleton
     fun provideGoodsRepository(
-        goodsDao: GoodsDao
+        goodsDao: GoodsDao,
+        locationDao: LocationDao
     ): GoodsRepository {
-        return GoodsRepositoryImpl(goodsDao)
+        return GoodsRepositoryImpl(goodsDao, locationDao)
     }
 } 

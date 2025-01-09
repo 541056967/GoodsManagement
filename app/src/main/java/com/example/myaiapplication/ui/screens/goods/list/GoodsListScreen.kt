@@ -1,11 +1,10 @@
 package com.example.myaiapplication.ui.screens.goods.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,19 +12,21 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.myaiapplication.domain.model.Goods
-import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +36,7 @@ fun GoodsListScreen(
     viewModel: GoodsListViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -65,6 +67,29 @@ fun GoodsListScreen(
                 singleLine = true
             )
 
+            ScrollableTabRow(
+                selectedTabIndex = selectedTabIndex,
+                modifier = Modifier.fillMaxWidth(),
+                edgePadding = 16.dp,  // 设置边缘留白
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        height = 3.dp // 设置指示器高度
+                    )
+                }
+            )  {
+                state.areaIds.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(title) },
+                        selected = selectedTabIndex == index,
+                        onClick = {
+                            selectedTabIndex = index
+                            viewModel.onEvent(GoodsListEvent.AreaSelected(title))
+                        }
+                    )
+                }
+            }
+
             if (state.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -80,18 +105,35 @@ fun GoodsListScreen(
                     Text(state.error!!)
                 }
             } else {
-                LazyColumn(
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement =Arrangement.spacedBy(4.dp)
                 ) {
-                    items(state.goods) { goods ->
-                        GoodsItem(
-                            goods = goods,
-                            onClick = { onGoodsClick(goods.id) }
-                        )
-                    }
+                   items(state.goods.size) { index ->
+                       GoodsItem(
+                           goods = state.goods[index],
+                           onClick = { onGoodsClick(state.goods[index].id) }
+                       )
+                   }
+
                 }
+
+
+//                LazyColumn(
+//                    modifier = Modifier.fillMaxSize(),
+//                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+//                    verticalArrangement = Arrangement.spacedBy(8.dp)
+//                ) {
+//                    items(state.goods) { goods ->
+//                        GoodsItem(
+//                            goods = goods,
+//                            onClick = { onGoodsClick(goods.id) }
+//                        )
+//                    }
+//                }
             }
         }
     }
@@ -107,124 +149,81 @@ private fun GoodsItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 4.dp)
+            .padding(vertical = 2.dp)
     ) {
-        Row(
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 图片部分
+        Surface(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .align(Alignment.CenterHorizontally)
+                .size(100.dp),
+            shape = RoundedCornerShape(4.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant
         ) {
-            // 图片部分
-            Surface(
+            Box(
                 modifier = Modifier
-                    .size(80.dp),
-                shape = RoundedCornerShape(4.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (goods.photoUrls.isNotEmpty()) {
-                        AsyncImage(
-                            model = goods.photoUrls.first(),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Image,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                if (goods.photoUrls.isNotEmpty()) {
+                    AsyncImage(
+                        model = goods.photoUrls.first(),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
+        }
 
-            // 文字内容部分
-            Column(
-                modifier = Modifier.weight(1f)
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center // 水平居中
+        ) {
+            Text(
+                text = goods.name,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // 标签展示
+        if (goods.tags.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = goods.name,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    // 显示价格
-                    goods.purchaseInfo?.let { info ->
-                        Text(
-                            text = "¥${info.currentMarketPrice ?: info.purchasePrice}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                goods.description?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-
-                // 标签展示
-                if (goods.tags.isNotEmpty()) {
-                    Row(
-                        modifier = Modifier
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        goods.tags.take(3).forEach { tag ->
-                            SuggestionChip(
-                                onClick = { },
-                                label = { 
-                                    Text(
-                                        text = tag,
-                                        style = MaterialTheme.typography.labelSmall
-                                    ) 
-                                }
-                            )
-                        }
-                        if (goods.tags.size > 3) {
+                goods.tags.take(3).forEach { tag ->
+                    SuggestionChip(
+                        onClick = { },
+                        label = {
                             Text(
-                                text = "+${goods.tags.size - 3}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(horizontal = 4.dp)
+                                text = tag,
+                                style = MaterialTheme.typography.labelSmall
                             )
                         }
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = goods.category,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
                     )
+                }
+                if (goods.tags.size > 3) {
                     Text(
-                        text = goods.location.containerPath,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary
+                        text = "+${goods.tags.size - 3}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 } 

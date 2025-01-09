@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +22,8 @@ class GoodsListViewModel @Inject constructor(
     val uiState: StateFlow<GoodsListState> = _uiState
 
     init {
-        loadGoods()
+        getAllLocations()
+        //loadGoods()
     }
 
     fun onEvent(event: GoodsListEvent) {
@@ -37,6 +39,14 @@ class GoodsListViewModel @Inject constructor(
                     loadGoodsByCategory(event.category)
                 } else {
                     loadGoods()
+                }
+            }
+            is GoodsListEvent.AreaSelected -> {
+                _uiState.update { it.copy(selectedArea = event.areaId) }
+                if (event.areaId.isEmpty() || event.areaId == "全部") {
+                    loadGoods()
+                } else {
+                    loadGoodsByAreaId(event.areaId)
                 }
             }
         }
@@ -115,6 +125,58 @@ class GoodsListViewModel @Inject constructor(
                             error = null
                         )
                     }
+                }
+        }
+    }
+
+    private fun loadGoodsByAreaId(areaId: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            repository.getGoodsByArea(areaId)
+                .catch { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = e.message ?: "Unknown error"
+                        )
+                    }
+                }
+                .collect { goods ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            goods = goods,
+                            error = null
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun getAllLocations() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            repository.getAllLocations()
+                .catch { e -> _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message ?: "Unknown error"
+                    )
+                } }
+                .collect{areaIds ->
+                    val mutableList: MutableList<String> = areaIds.toMutableList()
+                    mutableList.add(0, "全部")
+                    repository.getAllGoods()
+                        .collect{goods ->
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    areaIds = mutableList,
+                                    goods = goods,
+                                    error = null
+                                )
+                            }
+                        }
                 }
         }
     }

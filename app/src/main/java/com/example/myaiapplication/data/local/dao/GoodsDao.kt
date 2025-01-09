@@ -47,6 +47,15 @@ interface GoodsDao {
 
     @Transaction
     @Query("""
+        SELECT * FROM goods 
+        INNER JOIN location ON goods.id = location.goodsId 
+        WHERE location.areaId = :areaId
+    """)
+    fun getGoodsByAreaId(areaId: String): Flow<List<GoodsWithRelations>>
+
+
+    @Transaction
+    @Query("""
         SELECT DISTINCT g.* FROM goods g 
         LEFT JOIN goods_tags t ON g.id = t.goodsId 
         WHERE g.name LIKE '%' || :query || '%' 

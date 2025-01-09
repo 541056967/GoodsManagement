@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.myaiapplication.data.local.converter.Converters
 import com.example.myaiapplication.data.local.dao.GoodsDao
+import com.example.myaiapplication.data.local.dao.LocationDao
 import com.example.myaiapplication.data.local.entity.*
 
 @Database(
@@ -21,4 +22,6 @@ import com.example.myaiapplication.data.local.entity.*
 @TypeConverters(Converters::class)
 abstract class GoodsDatabase : RoomDatabase() {
     abstract fun goodsDao(): GoodsDao
+
+    abstract fun locationDao(): LocationDao
 } 
