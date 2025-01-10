@@ -23,7 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.myaiapplication.domain.model.Goods
@@ -118,22 +121,7 @@ fun GoodsListScreen(
                            onClick = { onGoodsClick(state.goods[index].id) }
                        )
                    }
-
                 }
-
-
-//                LazyColumn(
-//                    modifier = Modifier.fillMaxSize(),
-//                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-//                    verticalArrangement = Arrangement.spacedBy(8.dp)
-//                ) {
-//                    items(state.goods) { goods ->
-//                        GoodsItem(
-//                            goods = goods,
-//                            onClick = { onGoodsClick(goods.id) }
-//                        )
-//                    }
-//                }
             }
         }
     }
@@ -183,14 +171,31 @@ private fun GoodsItem(
             }
         }
 
+        Spacer(modifier = Modifier.height(6.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center // 水平居中
+            horizontalArrangement = Arrangement.Start // 水平居中
         ) {
             Text(
+                modifier = Modifier.padding(start = 8.dp),
                 text = goods.name,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+        }
+
+        //价格信息
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start // 水平居中
+        ) {
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = "￥" + goods.purchaseInfo.purchasePrice,
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 13.sp
             )
         }
 

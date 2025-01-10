@@ -12,7 +12,7 @@ fun GoodsWithRelations.toGoods(): Goods {
         category = goods.category,
         tags = tags?.map { it.tag } ?: emptyList(),
         attributes = attributes?.associate { it.key to it.value } ?: emptyMap(),
-        purchaseInfo = purchaseInfo?.toPurchaseInfo(),
+        purchaseInfo = purchaseInfo?.toPurchaseInfo() ?: PurchaseInfo(null, "", "", null),
         location = location?.toLocation() ?: Location("", "", null),
         photoUrls = photos?.map { it.url } ?: emptyList(),
         status = GoodsStatus.valueOf(goods.status),
@@ -37,8 +37,8 @@ fun Goods.toGoodsEntity(): GoodsEntity {
 fun PurchaseInfoEntity.toPurchaseInfo(): PurchaseInfo {
     return PurchaseInfo(
         date = date,
-        purchasePrice = purchasePrice,
-        currentMarketPrice = currentMarketPrice,
+        purchasePrice = purchasePrice.toString(),
+        currentMarketPrice = currentMarketPrice.toString(),
         channel = channel
     )
 }
@@ -47,8 +47,8 @@ fun PurchaseInfo.toPurchaseInfoEntity(goodsId: Long): PurchaseInfoEntity {
     return PurchaseInfoEntity(
         goodsId = goodsId,
         date = date,
-        purchasePrice = purchasePrice,
-        currentMarketPrice = currentMarketPrice,
+        purchasePrice = purchasePrice.toDouble(),
+        currentMarketPrice = purchasePrice.toDouble(),
         channel = channel
     )
 }

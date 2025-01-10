@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6750b1e6a393f4d1bfefeb6e5ac14435",
+    "identityHash": "2b2ae99b09e9ac4e4a5d4de5a8d3fa29",
     "entities": [
       {
         "tableName": "goods",
@@ -68,7 +68,7 @@
       },
       {
         "tableName": "purchase_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`goodsId` INTEGER NOT NULL, `date` INTEGER NOT NULL, `purchasePrice` REAL NOT NULL, `currentMarketPrice` REAL, `channel` TEXT NOT NULL, PRIMARY KEY(`goodsId`), FOREIGN KEY(`goodsId`) REFERENCES `goods`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`goodsId` INTEGER NOT NULL, `date` INTEGER, `purchasePrice` REAL, `currentMarketPrice` REAL, `channel` TEXT, PRIMARY KEY(`goodsId`), FOREIGN KEY(`goodsId`) REFERENCES `goods`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "goodsId",
@@ -80,13 +80,13 @@
             "fieldPath": "date",
             "columnName": "date",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "purchasePrice",
             "columnName": "purchasePrice",
             "affinity": "REAL",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "currentMarketPrice",
@@ -98,7 +98,7 @@
             "fieldPath": "channel",
             "columnName": "channel",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -311,7 +311,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6750b1e6a393f4d1bfefeb6e5ac14435')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b2ae99b09e9ac4e4a5d4de5a8d3fa29')"
     ]
   }
 }

@@ -178,7 +178,7 @@ private fun GoodsDetailContent(
                     info.currentMarketPrice?.let { 
                         DetailItem("当前市场价", "¥$it")
                     }
-                    DetailItem("购买渠道", info.channel)
+                    info.channel?.let { DetailItem("购买渠道", it) }
                 }
             }
         }

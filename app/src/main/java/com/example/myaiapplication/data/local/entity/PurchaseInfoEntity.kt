@@ -19,8 +19,8 @@ import java.util.Date
 data class PurchaseInfoEntity(
     @PrimaryKey
     val goodsId: Long,
-    val date: Date,
-    val purchasePrice: Double,
+    val date: Date?,
+    val purchasePrice: Double?,
     val currentMarketPrice: Double?,
-    val channel: String
+    val channel: String?
 ) 

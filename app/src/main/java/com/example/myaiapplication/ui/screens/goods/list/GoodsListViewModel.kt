@@ -28,7 +28,7 @@ class GoodsListViewModel @Inject constructor(
 
     fun onEvent(event: GoodsListEvent) {
         when (event) {
-            is GoodsListEvent.Refresh -> loadGoods()
+            is GoodsListEvent.Refresh -> getAllLocations()
             is GoodsListEvent.SearchQueryChanged -> {
                 _uiState.update { it.copy(searchQuery = event.query) }
                 searchGoods(event.query)

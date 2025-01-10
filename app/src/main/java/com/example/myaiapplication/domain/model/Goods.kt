@@ -10,7 +10,7 @@ data class Goods(
     val category: String,
     val tags: List<String> = emptyList(),
     val attributes: Map<String, String> = emptyMap(),
-    val purchaseInfo: PurchaseInfo? = null,
+    val purchaseInfo: PurchaseInfo,
     val location: Location,
     val photoUrls: List<String> = emptyList(),
     val status: GoodsStatus = GoodsStatus.NORMAL,
@@ -19,10 +19,10 @@ data class Goods(
 )
 
 data class PurchaseInfo(
-    val date: Date,
-    val purchasePrice: Double,
-    val currentMarketPrice: Double? = null,
-    val channel: String
+    val date: Date? = null,
+    val purchasePrice: String,
+    val currentMarketPrice: String,
+    val channel: String? = null
 )
 
 data class Location(

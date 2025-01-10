@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myaiapplication.ui.components.DetailSection
@@ -134,6 +135,21 @@ fun GoodsEditScreen(
                         }
                     }
                 }
+
+                // 价格信息
+                OutlinedTextField(
+                    value = state.purchaseInfo.purchasePrice,
+                    onValueChange = { newValue ->
+                        if (newValue.matches(Regex("^\\d*\\.?\\d{0,2}"))) {
+                            viewModel.onEvent(GoodsEditEvent.PurchaseInfoChanged(
+                                state.purchaseInfo.copy(purchasePrice = newValue)
+                            ))
+                        }
+                    },
+                    label = { Text("购入价格") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
 
                 // 位置信息
                 OutlinedTextField(

@@ -11,7 +11,7 @@ data class GoodsEditState(
     val category: String = "",
     val status: GoodsStatus = GoodsStatus.NORMAL,
     val location: Location = Location("", "", null),
-    val purchaseInfo: PurchaseInfo? = null,
+    val purchaseInfo: PurchaseInfo = PurchaseInfo(null, "", "", null),
     val tags: List<String> = emptyList(),
     val attributes: Map<String, String> = emptyMap(),
     val photoUrls: List<String> = emptyList(),
