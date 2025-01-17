@@ -73,17 +73,27 @@ fun GoodsListScreen(
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
                 modifier = Modifier.fillMaxWidth(),
-                edgePadding = 16.dp,  // 设置边缘留白
+                edgePadding = 0.dp,  // 设置边缘留白
                 indicator = { tabPositions ->
+                    val tabPosition = tabPositions[selectedTabIndex]
+                    val textWidth = tabPosition.width
                     TabRowDefaults.Indicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        height = 3.dp // 设置指示器高度
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                            .widthIn(textWidth + 1.dp)
+                            .height(1.dp)
                     )
                 }
             )  {
                 state.areaIds.forEachIndexed { index, title ->
                     Tab(
-                        text = { Text(title) },
+                        modifier = Modifier.wrapContentWidth().height(32.dp),
+                        text = { Text(
+                            modifier = Modifier
+                                .wrapContentWidth()
+                                .padding(vertical = 8.dp),
+                            text = title,
+                            fontSize = 12.sp) },
                         selected = selectedTabIndex == index,
                         onClick = {
                             selectedTabIndex = index
@@ -112,8 +122,8 @@ fun GoodsListScreen(
                     columns = GridCells.Fixed(3),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement =Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement =Arrangement.spacedBy(8.dp)
                 ) {
                    items(state.goods.size) { index ->
                        GoodsItem(
@@ -182,7 +192,8 @@ private fun GoodsItem(
                 text = goods.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
+                fontSize = 12.sp,
+                maxLines = 1
             )
         }
 
@@ -195,7 +206,7 @@ private fun GoodsItem(
                 modifier = Modifier.padding(start = 8.dp),
                 text = "￥" + goods.purchaseInfo.purchasePrice,
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = 13.sp
+                fontSize = 10.sp
             )
         }
 

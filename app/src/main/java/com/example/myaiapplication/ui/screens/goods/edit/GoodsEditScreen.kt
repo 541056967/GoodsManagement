@@ -23,6 +23,7 @@ import com.example.myaiapplication.util.PermissionManager
 import com.example.myaiapplication.domain.model.GoodsStatus
 import com.example.myaiapplication.domain.model.Location
 import com.example.myaiapplication.domain.model.PurchaseInfo
+import com.example.myaiapplication.ui.components.DetailItem
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
