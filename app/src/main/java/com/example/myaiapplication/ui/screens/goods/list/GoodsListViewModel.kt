@@ -2,13 +2,11 @@ package com.example.myaiapplication.ui.screens.goods.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myaiapplication.domain.model.Goods
 import com.example.myaiapplication.domain.repository.GoodsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,13 +20,12 @@ class GoodsListViewModel @Inject constructor(
     val uiState: StateFlow<GoodsListState> = _uiState
 
     init {
-        getAllLocations()
-        //loadGoods()
+        refreshPage()
     }
 
     fun onEvent(event: GoodsListEvent) {
         when (event) {
-            is GoodsListEvent.Refresh -> getAllLocations()
+            is GoodsListEvent.Refresh -> refreshPage()
             is GoodsListEvent.SearchQueryChanged -> {
                 _uiState.update { it.copy(searchQuery = event.query) }
                 searchGoods(event.query)
@@ -153,7 +150,7 @@ class GoodsListViewModel @Inject constructor(
         }
     }
 
-    private fun getAllLocations() {
+    private fun refreshPage() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             repository.getAllLocations()

@@ -47,8 +47,8 @@ fun PurchaseInfo.toPurchaseInfoEntity(goodsId: Long): PurchaseInfoEntity {
     return PurchaseInfoEntity(
         goodsId = goodsId,
         date = date,
-        purchasePrice = purchasePrice.toDouble(),
-        currentMarketPrice = purchasePrice.toDouble(),
+        purchasePrice = if (purchasePrice.isEmpty()) null else purchasePrice.toDoubleOrNull(),
+        currentMarketPrice = if (currentMarketPrice.isEmpty()) null else currentMarketPrice.toDoubleOrNull(),
         channel = channel
     )
 }

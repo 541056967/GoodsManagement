@@ -14,20 +14,28 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import coil.compose.AsyncImage
 import com.example.myaiapplication.domain.model.Goods
 
@@ -39,14 +47,38 @@ fun GoodsListScreen(
     viewModel: GoodsListViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    var isFromGoodsEdit by rememberSaveable { mutableStateOf(false) }
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+
+
+
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (isFromGoodsEdit) {
+                    selectedTabIndex = 0
+                    viewModel.onEvent(GoodsListEvent.Refresh).also { isFromGoodsEdit = false }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("物品管理") },
                 actions = {
-                    IconButton(onClick = onAddClick) {
+                    IconButton(onClick = {
+                        isFromGoodsEdit = true
+                        onAddClick()
+                    }) {
                         Icon(Icons.Default.Add, contentDescription = "添加")
                     }
                 }
@@ -87,7 +119,9 @@ fun GoodsListScreen(
             )  {
                 state.areaIds.forEachIndexed { index, title ->
                     Tab(
-                        modifier = Modifier.wrapContentWidth().height(32.dp),
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .height(32.dp),
                         text = { Text(
                             modifier = Modifier
                                 .wrapContentWidth()
@@ -197,6 +231,9 @@ private fun GoodsItem(
             )
         }
 
+        if (goods.purchaseInfo.purchasePrice.isNotEmpty()) {
+
+        }
         //价格信息
         Row(
             modifier = Modifier.fillMaxWidth(),

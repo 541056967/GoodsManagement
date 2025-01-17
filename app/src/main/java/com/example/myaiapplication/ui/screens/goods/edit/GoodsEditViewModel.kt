@@ -8,6 +8,8 @@ import com.example.myaiapplication.domain.model.GoodsStatus
 import com.example.myaiapplication.domain.model.Location
 import com.example.myaiapplication.domain.model.PurchaseInfo
 import com.example.myaiapplication.domain.repository.GoodsRepository
+import com.example.myaiapplication.ui.screens.goods.list.GoodsListEvent
+import com.example.myaiapplication.ui.screens.goods.list.GoodsListViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +25,7 @@ class GoodsEditViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val goodsId: Long = savedStateHandle["goodsId"] ?: -1L
-    
+
     private val _uiState = MutableStateFlow(GoodsEditState())
     val uiState: StateFlow<GoodsEditState> = _uiState
 
@@ -168,10 +170,13 @@ class GoodsEditViewModel @Inject constructor(
                 } else {
                     repository.updateGoods(goods)
                 }
-                _uiState.update { it.copy(isSaved = true) }
+                _uiState.update { it.copy(isSaved = true)
+                }
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = e.message ?: "Unknown error") }
+                _uiState.update { it.copy(error = e.message ?: "Unknown error")
+                }
             }
         }
     }
+
 } 
