@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.List
@@ -26,7 +25,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.myaiapplication.ui.navigation.AppNavigation
 import com.example.myaiapplication.ui.navigation.Screen
 import com.example.myaiapplication.ui.screens.analytics.AnalyticsScreen
 import com.example.myaiapplication.ui.screens.goods.detail.GoodsDetailScreen
