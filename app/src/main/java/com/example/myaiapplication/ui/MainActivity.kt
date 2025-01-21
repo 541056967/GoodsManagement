@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.Interests
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myaiapplication.ui.navigation.Screen
 import com.example.myaiapplication.ui.screens.analytics.AnalyticsScreen
+import com.example.myaiapplication.ui.screens.config.ConfigScreen
 import com.example.myaiapplication.ui.screens.goods.detail.GoodsDetailScreen
 import com.example.myaiapplication.ui.screens.goods.edit.GoodsEditScreen
 import com.example.myaiapplication.ui.screens.goods.list.GoodsListScreen
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
@@ -109,6 +111,13 @@ fun MyApp() {
                     }
                 )
             }
+            composable("config") {
+                Scaffold(
+                    bottomBar = { BottomNavigationBar(navController) }
+                ) {
+                    ConfigScreen()
+                }
+            }
             composable("analytics") {
                 Scaffold(
                     bottomBar = { BottomNavigationBar(navController) }
@@ -122,9 +131,9 @@ fun MyApp() {
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    val items = listOf(Screen.GoodsList.route, "analytics")
-    val icons = listOf(Icons.Default.List, Icons.Default.Analytics)
-    val titles = listOf("Goods", "Analytics")
+    val items = listOf(Screen.GoodsList.route, "config", "analytics")
+    val icons = listOf(Icons.Default.List, Icons.Default.Interests,Icons.Default.Analytics)
+    val titles = listOf("Goods", "Config", "Analytics")
 
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
