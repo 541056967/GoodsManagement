@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.wangjie.goods"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -107,8 +107,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation("androidx.room:room-testing:$roomVersion")
 
-    //charty
-    implementation("com.himanshoe:charty:2.0.0-alpha01")
+    implementation ("co.yml:ycharts:2.1.0")
 }
 
 // 添加 Hilt 配置
